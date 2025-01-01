@@ -4,5 +4,34 @@
 \end{center}
 
 \section{Artaban a SLAM}
-Algoritmy \acrshort{slam} vychádzajú zo známeho kinematického modelu mobilného robota, ktorý začína obvykle v neznámej polohe a pohybuje sa v prostredí, ktoré môže obsahovať prirodzené alebo umelé značky prostredia. Úlohou \acrshort{slam} teda je zostaviť mapu prostredia a zároveň ju použiť na vypočet mobilného robota v reálnom čase.\cite{fs1}\newline
+Algoritmy \acrshort{slam} vychádzajú zo známeho kinematického modelu mobilného robota, ktorý začína obvykle v neznámej polohe a pohybuje sa v prostredí, ktoré môže obsahovať prirodzené alebo umelé značky prostredia. Úlohou \acrshort{slam}u teda je zostaviť mapu prostredia a zároveň ju použiť na vypočet mobilného robota v reálnom čase.\cite{fs1}\newline
+Všeobecne sa dá \acrshort{slam} matematicky opísať ako výpočet distribúcie pravdepodobností:
+\begin{equation}
+    P(x_k,m_k|Z_{0:k},U_{0:k},x_0)
+\end{equation}
+Kde:
+\begin{itemize}
+    \item $x_k$ je aktuálna poloha robota
+    \item $m_k$ je aktuálna mapa prostredia
+    \item $Z_{0:k}$ sú značky prostredia detekované snímačom
+    \item $U_{0:k}$ je priebeh akčných zásahov
+    \item $x_0$ je predchádzajúca (apriórna) poloha robota
+\end{itemize}
+Všeobecné riešenie \acrshort{slam}u je založené na rekurzívnom Bayersovskom odhade s využitím akčného zásahu $u_k$ a pozorovania $z_k$ pomocou ktorého sa aktualizuje aposteriórna pravdepodobnosť s apriórnym odhadom z kroku k-1.
+\begin{equation}
+    P(x_{k-1},m_k|Z_{0:k-1},U_{0:k-1},x_0)
+\end{equation}
+Za predpokladu, že proces prechodu stavov je Markovov proces, je možné \acrshort{slam} určiť Bayersovským odhadom pozostávajúcim z krokov predikcie a korekcie.\cite{fs2}
+\begin{equation}
+    \begin{split}
+        & P(x_k,m_k|Z_{0:k-1},U_{0:k},x_0)=\int P(x_k|x_{k-1},u_k) \cdot P(x_{k-1},m_k|Z_{0:k-1},U_{0:k-1},x_0)dx_{k-1}\\
+        & P(x_k,m_k|Z_{0:k},U_{0:k},x_0)=\frac{P(z_k|x_k,m_k)\cdot P(x_k,m_k|Z_{0:k-1},U_{0:k},x_0)}{P(z_k|Z_{0:k-1},U_{0:k})}
+    \end{split}
+\end{equation}
+Kde:
+\begin{itemize}
+    \item $P(x_k|x_{k-1},u_k)$ je model systému
+    \item $P(z_k|x_k,m_k)$ je model merania
+\end{itemize}\newpage
 
+\subsection{Model systému}
