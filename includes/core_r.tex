@@ -17,7 +17,7 @@ Kde:
     \item $U_{0:k}$ je priebeh akčných zásahov
     \item $x_0$ je predchádzajúca (apriórna) poloha robota
 \end{itemize}
-Všeobecné riešenie \acrshort{slam}u je založené na rekurzívnom Bayersovskom odhade s využitím akčného zásahu $u_k$ a pozorovania $z_k$ pomocou ktorého sa aktualizuje aposteriórna pravdepodobnosť s apriórnym odhadom z kroku k-1.
+Všeobecné riešenie \acrshort{slam}u je založené na rekurzívnom Bayersovskom odhade s využitím akčného zásahu $u_k$ a pozorovania $z_k$ pomocou ktorého sa aktualizuje aposteriórna pravdepodobnosť s apriórnym odhadom z kroku k-1.\cite{fs2}
 \begin{equation}
     P(x_{k-1},m_k|Z_{0:k-1},U_{0:k-1},x_0)
 \end{equation}
@@ -35,3 +35,91 @@ Kde:
 \end{itemize}\newpage
 
 \subsection{Model systému}
+Zostavenie modelu pre systém Artaban vo forme:
+\begin{equation}
+    x_{i}=x_{i-1}u_iA
+\end{equation}
+Kde:
+\begin{itemize}
+    \item $x_i$ je stavový vektor novej polohy
+    \item $x_{i-1}$ je stavový vektor predošlej polohy
+    \item $u_i$ je vektor akčných zásahov
+    \item $A$ je matica funkcií popisujúcich vzťahy medzi $u_i$ a $x_{i-1}$ 
+\end{itemize}
+Je časovo extrémne náročné riešenie, vyžadujúce popis vysoko nelineárnych, medzi sebou prepojených vzťahov. Linearizáciou týchto vzťahov môže vzniknúť model, ktorého vlastnosti pravdepodobne nebudú schopné dostatočne presne opísať pohyb robota Artaban.\newline
+Podľa tvrdení tímu Panza Robotics, \cite{est} a \cite{propEst} je výhodné kontinuálne odhadovať pohybový model pomocou pozorovaťeľov a Kalman flitrov. Artaban odhaduje polohu trupu pomocou lineárneho proprioceptívneho Kalman filtra
+\begin{center}
+    Čakám na response z Panzy lebo ich verzia je kúsok dosť iná ako \cite{propEst} taaak hádam čo to dostanem
+\end{center}
+
+\newpage\subsubsection{Overovanie pozorovateľa polohy robota}
+Proprioceptívny pozorovateľ robota Artaban bol overený simulačne ale nie v podmienkach reálneho asveta. Preto sme sa rozhodli overiť pozorovateľ nasadení na zariadení Artaban V 0.2. Pre overenie presnosti a funkčnosti pozorovateľa bol použitý systém Optitrack.
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=6cm]{img/a1_meas.png}
+    \caption{Artaban V 0.2 pripravený na meranie}
+    \label{artMeas}
+\end{figure}	
+
+\noindent Značky systému Optitrack boli umiestnené nasledovne:
+\begin{center}
+    W.I.P lebo neni foto XD
+\end{center}
+Značky sme prvotne umiestnili na chrbát, hlavu a okolo trupu. Toto prvotné riešenie nebolo použiteľné, kvôli nepresným natočeniam osí $x$, $y$ a $z$ v softvéri Motive. Smery bolo potrebné manuálne ladiť, čo sme zhodnotili za nepoužiteľné.\newline
+Preto sme značky umiestnili len na chrbát. Motive omnoho lepšie odhadol smery osí a prenos chyby manuálnej kalibrácie bol minimalizovaný.
+
+\newpage\subsubsection{Overovanie pozorovateľa polohy robota: Nastavenie experimentov}
+Robot bol postavený na snímanú plochu. Prebehlo spustenie odometrie robota a vynulovanie polohy robota a systému Optitrack.\newline
+Následne sa robot pohyboval náhodne po snímanej ploche. Pohyby a trvanie experimentu boli vždy iné.
+
+\subsubsection{Overovanie pozorovateľa polohy robota: Experiment 1}
+\begin{center}
+    Grafy treba prerobiť taakže tie pôjdu sem potom
+\end{center}
+Štatistické ukazovatele:
+\begin{itemize}
+    \item Prejdená vzdialenosť (Optitrack): 13.042538 [m]
+    \item Prejdená vzdialenosť (Robot): 17.366829 [m]
+    \item RMSE prejdenej vzdialenosti: 2.535 [m]
+    \item RMSE uhol rolovania (roll): 0.163926 [°]
+    \item RMSE uhol sklonu (pitch): 0.085971 [°]
+    \item RMSE uhol vybočenia (yaw): 3.747096 [°] 
+    \item RMSE os $x$: 0.062433 [m]
+    \item RMSE os $y$: 0.098549 [m]
+    \item RMSE os $z$: 0.078166 [m]
+\end{itemize}
+Je dôležité podotknúť, že zvýšená hodnota RMSE uhlu vybočenia je spôsobená osciláciou hodnoty medzi -180° a 180°, keďže \acrshort{ros} transformuje radiány na stupne v tomto rozmedzí, čo spôsobí nesprávne vyhodnotenie RMSE pri týchto krajných hodnotách.
+
+\newpage\subsubsection{Overovanie pozorovateľa polohy robota: Experiment 2}
+\begin{center}
+    Grafy comming soon
+\end{center}
+Štatistické ukazovatele:
+\begin{itemize}
+    \item Prejdená vzdialenosť (Optitrack): 3.510216 [m]
+    \item Prejdená vzdialenosť (Robot): 4.337198 [m]
+    \item RMSE prejdenej vzdialenosti: 0.492973 [m]
+    \item RMSE uhol rolovania (roll): 0.161815 [°]
+    \item RMSE uhol sklonu (pitch): 0.071409 [°]
+    \item RMSE uhol vybočenia (yaw): 0.018541 [°] 
+    \item RMSE os $x$: 0.032619 [m]
+    \item RMSE os $y$: 0.023173 [m]
+    \item RMSE os $z$: 0.032046 [m]
+\end{itemize}
+
+\newpage\subsubsection{Overovanie pozorovateľa polohy robota: Experiment 3}
+\begin{center}
+    Grafy comming soon
+\end{center}
+Štatistické ukazovatele:
+\begin{itemize}
+    \item Prejdená vzdialenosť (Optitrack): 14.614010 [m]
+    \item Prejdená vzdialenosť (Robot): 18.108734 [m]
+    \item RMSE prejdenej vzdialenosti: 2.051004 [m]
+    \item RMSE uhol rolovania (roll): 0.091147 [°]
+    \item RMSE uhol sklonu (pitch): 0.074933 [°]
+    \item RMSE uhol vybočenia (yaw): 0.149483 [°] 
+    \item RMSE os $x$: 0.135738 [m]
+    \item RMSE os $y$: 0.088887 [m]
+    \item RMSE os $z$: 0.036152 [m]
+\end{itemize}
